@@ -1,3 +1,4 @@
+var selectiveSync = require('./selective-sync')
 var doImport = require('./import-progress')
 var stats = require('./stats')
 var network = require('./network')
@@ -14,6 +15,7 @@ module.exports = function (state, bus) {
     if (state.opts.http) serve(state, bus)
 
     if (state.writable && state.opts.import) doImport(state, bus)
+    else if (state.opts.sparse) selectiveSync(state, bus)
     else download(state, bus)
 
     if (state.dat.archive.content) return bus.emit('archive:content')

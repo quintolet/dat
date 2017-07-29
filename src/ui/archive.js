@@ -27,7 +27,8 @@ function archiveUI (state) {
   if (state.title) title += state.title
   else if (state.writable) title += 'Sharing dat'
   else title += 'Downloading dat'
-  if (stats.version > 0) title += `: ${stats.files} ${pluralize('file', stats.file)} (${pretty(stats.byteLength)})`
+  if (state.opts.sparse) title += `: ${state.opts.select.length} ${pluralize('file', state.opts.select.length)} (${pretty(state.selectedByteLength)})`
+  else if (stats.version > 0) title += `: ${stats.files} ${pluralize('file', stats.file)} (${pretty(stats.byteLength)})`
   else if (stats.version === 0) title += ': (empty archive)'
   if (state.http && state.http.listening) title += `\nServing files over http at http://localhost:${state.http.port}`
 

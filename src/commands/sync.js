@@ -21,6 +21,12 @@ module.exports = {
       abbr: 'ignore-hidden'
     },
     {
+      name: 'select',
+      boolean: false,
+      default: false,
+      help: 'Sync only the list of selected files or directories.'
+    },
+    {
       name: 'watch',
       boolean: true,
       default: true,
@@ -42,6 +48,7 @@ function sync (opts) {
   var archiveUI = require('../ui/archive')
   var trackArchive = require('../lib/archive')
   var onExit = require('../lib/exit')
+  var parseFiles = require('../parse-files')
   var parseArgs = require('../parse-args')
   var debug = require('debug')('dat')
 
@@ -60,6 +67,13 @@ function sync (opts) {
   neat.use(onExit)
   neat.use(function (state, bus) {
     state.opts = opts
+
+    if (opts.select) {
+      state.title = 'Syncing'
+      state.selectedByteLength = 0
+      opts.select = parseFiles(opts.select)
+      opts.sparse = true
+    }
 
     Dat(opts.dir, opts, function (err, dat) {
       if (err && err.name === 'MissingError') return bus.emit('exit:warn', 'No existing archive in this directory.')
